@@ -7,13 +7,13 @@ describe('switchMap', () => {
 
     it('should return a new function to apply the switch', () => {
       let _innerSource: any = 12;
-      const switchMappedFct = switchMap((x) => new Observable(x * 2));
-      expect(switchMappedFct(_innerSource).value).toEqual(new Observable(24));
+      const switchMappedFct = switchMap((x) => new Observable({initialSequence: [x * 2]}));
+      expect(switchMappedFct(_innerSource).value).toEqual(new Observable({initialSequence: [24]}));
       expect(switchMappedFct(_innerSource).isUnwrapSwitch()).toEqual(true);
 
       _innerSource = {firstname: 'John', lastname: 'DOE'};
-      const fullnameFct = switchMap(({firstname, lastname}) => new Observable(`${firstname} ${lastname}`));
-      expect(fullnameFct(_innerSource).value).toEqual(new Observable('John DOE'));
+      const fullnameFct = switchMap(({firstname, lastname}) => new Observable({initialSequence: [`${firstname} ${lastname}`]}));
+      expect(fullnameFct(_innerSource).value).toEqual(new Observable({initialSequence: ['John DOE']}));
       expect(switchMappedFct(_innerSource).isUnwrapSwitch()).toEqual(true);
     });
 

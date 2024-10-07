@@ -17,6 +17,7 @@ export interface Subscriber<T = any> {
   next?: OnNext<T>;
   error?: OnError;
   complete?: OnComplete;
+  unsubscribeOnComplete?: boolean;
 }
 
 export function isInstanceOfSubscriber(obj: any): obj is Subscriber {
@@ -28,7 +29,7 @@ export function isInstanceOfSubscriber(obj: any): obj is Subscriber {
       (field) =>
         obj[field] !== undefined &&
         obj[field] !== null &&
-        isFunction(obj[field])
+        (isFunction(obj[field]))
     );
   }
   return (
@@ -40,7 +41,7 @@ export function isInstanceOfSubscriber(obj: any): obj is Subscriber {
 export function subscriberOf<T>(
   next?: OnNext<T>,
   error?: OnError,
-  complete?: OnComplete
+  complete?: OnComplete,
 ): Subscriber<T> {
   const subscriber: Subscriber<T> = { next, error, complete };
   if (!isInstanceOfSubscriber(subscriber)) {

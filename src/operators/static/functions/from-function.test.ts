@@ -3,15 +3,15 @@ import {fork} from '../creation/fork';
 import { map } from '../../transform/map';
 
 describe('fromFunction', () => {
-    it('should return a callable function to which you can subscribe', () => {
+    fit('should return a callable function to which you can subscribe', () => {
         function sum(...args: number[]) {
             return args.reduce((acc, curr) => acc + curr, 0);
         }
 
         const sum$ = fromFunction(sum);
         const next = jest.fn((res) => expect(res).toBe(4));
-        sum$(2, 2);
         sum$.subscribe(next);
+        sum$(2, 2);
         expect(next).toHaveBeenNthCalledWith(1, 4);
     });
 

@@ -11,7 +11,6 @@ import {
   OperationResultFlag,
   OperatorFunction,
 } from "../models/operator";
-import { fork } from "../operators";
 import { Observable } from "./observable";
 
 export class PromiseObservable<T>
@@ -34,12 +33,6 @@ export class PromiseObservable<T>
           )
         );
       });
-  }
-
-  pipe<U = any>(
-    ...operations: OperatorFunction<T, OperationResult<U>>[]
-  ): Observable<U> {
-    return fork(this, ...operations);
   }
 
   subscribe(subscriber: Subscriber<T> | OnNext<T>): Subscription {

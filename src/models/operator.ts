@@ -31,8 +31,16 @@ export class OperationResult<T> {
         return this._flag === OperationResultFlag.OperationError;
     }
 
+    isExecuteFunctionToGetOperationResult(): boolean {
+        return this._flag === OperationResultFlag.ExecuteFunctionToGetOperationResult;
+    }
+
     isWaitingForValue(): boolean {
-        return this.flag === OperationResultFlag.WaitingForValue;
+        return this._flag === OperationResultFlag.WaitingForValue;
+    }
+
+    isDeferedOperation(): boolean {
+        return this._flag === OperationResultFlag.DeferedOperation;
     }
 }
 
@@ -41,5 +49,7 @@ export enum OperationResultFlag {
     MustStop = 'MustStop',
     FilterNotMatched = 'FilterNotMatched',
     OperationError = 'OperationError',
-    WaitingForValue = 'WaitingForValue'
+    WaitingForValue = 'WaitingForValue',
+    ExecuteFunctionToGetOperationResult = 'ExecuteFunctionToGetOperationResult',
+    DeferedOperation = 'DeferedOperation',
 }

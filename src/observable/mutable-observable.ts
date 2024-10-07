@@ -3,7 +3,7 @@ import {
   OperationResult,
   OperationResultFlag,
 } from "../models/operator";
-import { OnComplete, OnNext, Subscriber, Subscription } from "../models/subscription";
+import { OnComplete, Subscriber } from "../models/subscription";
 import { Observable } from "./observable";
 
 export class MutableObservable<T = never>
@@ -12,22 +12,17 @@ export class MutableObservable<T = never>
   private _preProcessOperations: OperatorFunction<T, any>[] = [];
 
   constructor(...initialSequence: T[]) {
-    super(...initialSequence);
+    super({initialSequence});
     this._isComplete = false;
   }
 
-  close(): this {
+  close(): this { 
     if (this._isComplete) {
       return this;
     }
 
     this._isComplete = true;
-    this._subscribers
-      .filter((s) => s.complete)
-      .forEach((s) => {
-        (s.complete as OnComplete)();
-      });
-
+    super._triggerExecution(this._innerSequence, this._subscribers, this._forks);
     return this;
   }
 
@@ -53,11 +48,11 @@ export class MutableObservable<T = never>
       this.next(...this.innerSequence.map((event) => event.value));
 
       this.innerSequence.push(newSequence[idxError]);
-      this._triggerExecution([newSequence[idxError]], this._subscribers);
+      super._triggerExecution([newSequence[idxError]], this._subscribers, this._forks);
       return this;
     }
 
-    this._triggerExecution(this.innerSequence = newSequence, this._subscribers);
+    super._triggerExecution(this.innerSequence = newSequence, this._subscribers, this._forks);
     
     return this;
   }
@@ -71,7 +66,8 @@ export class MutableObservable<T = never>
       events,
       this._preProcessOperations
     );
-    this._triggerExecution(this.innerSequence, this._subscribers);
+    
+    super._triggerExecution(this.innerSequence, this._subscribers, this._forks);
     return this;
   }
 
@@ -104,12 +100,5 @@ export class MutableObservable<T = never>
       }
     }
     return newSequence;
-  }
-
-  private _triggerExecution(
-    sequence: OperationResult<T>[],
-    subscribers: Subscriber<T>[]
-  ): void {
-    subscribers.forEach((s) => this.executeSubscriber(sequence, s));
   }
 }
